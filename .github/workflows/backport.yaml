@@ -36,6 +36,5 @@ jobs:
             --base "$TARGET"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COMMIT: ${{ github.event.inputs.commit }}
         TARGET: ${{ github.event.inputs.target }}
