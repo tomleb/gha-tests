@@ -21,6 +21,7 @@ jobs:
     - run: |
         BRANCH="test-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
         gh repo clone ${{ github.repository }}
+        cd gha-tests
         git checkout -b "$BRANCH"
         git cherry-pick $COMMIT
         git push -u origin "$BRANCH"
@@ -31,5 +32,6 @@ jobs:
             --base "$TARGET"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COMMIT: ${{ github.event.inputs.commit }}
         TARGET: ${{ github.event.inputs.target }}
