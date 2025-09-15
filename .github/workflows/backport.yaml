@@ -18,13 +18,9 @@ jobs:
   backport:
     runs-on: ubuntu-latest
     steps:
-    - name : Checkout repository
-      # https://github.com/actions/checkout/releases/tag/v4.1.1
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      with:
-        token: "{{ secrets.GITHUB_TOKEN }}"
     - run: |
         BRANCH="test-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+        gh repo clone ${{ github.repository }}
         git checkout -b "$BRANCH"
         git cherry-pick $COMMIT
         git push -u origin "$BRANCH"
