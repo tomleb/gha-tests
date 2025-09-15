@@ -22,6 +22,8 @@ jobs:
         BRANCH="test-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
         gh repo clone ${{ github.repository }}
         cd gha-tests
+        git config user.email "tomleb@tomlebreux.com"
+        git config user.name "Tom Lebreux"
         git checkout -b "$BRANCH"
         git cherry-pick $COMMIT
         git push -u origin "$BRANCH"
