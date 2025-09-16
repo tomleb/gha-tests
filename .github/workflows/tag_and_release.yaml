@@ -27,12 +27,23 @@ jobs:
       run: |
         git tag
         latest_patch=$(git tag | grep "^$PREFIX\." | sed "s|$PREFIX\.||" | sort -n | tail -n 1)
-        new_patch=$((latest_patch+1))
-        echo "tag=$PREFIX.$new_patch" >> $GITHUB_OUTPUT
+        latest_tag=$PREFIX.$latest_patch
+        # If latest is already at HEAD, then we don't need to create it
+        if git tag --points-at HEAD | grep -c "$latest_tag"; then
+          echo "Tag $latest_tag already is already on latest commit, no need to create a new tag"
+          echo "tag=$latest_tag" >> $GITHUB_OUTPUT
+          echo "needs_create=true" >> $GITHUB_OUTPUT
+        else
+          echo "Tag $latest_tag is on older commit, will create a new tag"
+          new_patch=$((latest_patch+1))
+          echo "tag=$PREFIX.$new_patch" >> $GITHUB_OUTPUT
+          echo "needs_create=false" >> $GITHUB_OUTPUT
+        fi
       env:
         PREFIX: ${{ github.event.inputs.tag_prefix }}
 
     - name: Create Tag
+      if: ${{ steps.tag.outputs.needs_create == 'true' }}
       uses: actions/github-script@v6
       with:
         script: |
