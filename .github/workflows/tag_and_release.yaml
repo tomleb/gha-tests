@@ -6,7 +6,7 @@ on:
       rancher_branch:
         required: true
         default: "main"
-      tag:
+      tag_prefix:
         required: true
         default: "v1.0"
 
@@ -20,6 +20,15 @@ jobs:
     - name : Checkout repository
       uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
+    - name: Compute next tag
+      id: tag
+      run: |
+        latest_patch=$(git tag | grep "^$PREFIX\." | sed "s|$PREFIX\.||" | sort -n | tail -n 1)
+        new_patch=$((latest_patch+1))
+        echo "tag=$PREFIX.$new_patch" >> $GITHUB_OUTPUT
+      env:
+        PREFIX: ${{ github.event.inputs.tag_prefix }}
+
     - name: Create Tag
       uses: actions/github-script@v6
       with:
@@ -27,6 +36,6 @@ jobs:
           github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'refs/tags/${{ github.event.inputs.tag }}',
+              ref: 'refs/tags/${{ steps.tag.outputs.tag }}',
               sha: context.sha
           })
