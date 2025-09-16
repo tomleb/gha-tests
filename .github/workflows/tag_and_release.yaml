@@ -1,0 +1,33 @@
+name: Tag and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      rancher_branch:
+        required: true
+        default: "main"
+      tag:
+        required: true
+        default: "v1.0"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+    steps:
+    - name : Checkout repository
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+    - name: Create Tag
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ github.event.inputs.tag }}',
+              sha: context.sha
+          })

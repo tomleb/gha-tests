@@ -24,8 +24,8 @@ jobs:
         gh repo clone ${{ github.repository }}
         cd gha-tests
         git checkout $TARGET
-        git config user.email "tomleb@tomlebreux.com"
-        git config user.name "Tom Lebreux"
+        git --global config user.email "tomleb@tomlebreux.com"
+        git --global config user.name "Tom Lebreux"
         git checkout -b "$BRANCH"
         git cherry-pick $COMMIT
         git push -u origin "$BRANCH"
