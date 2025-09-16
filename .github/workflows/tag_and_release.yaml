@@ -25,6 +25,7 @@ jobs:
     - name: Compute next tag
       id: tag
       run: |
+        git tag
         latest_patch=$(git tag | grep "^$PREFIX\." | sed "s|$PREFIX\.||" | sort -n | tail -n 1)
         new_patch=$((latest_patch+1))
         echo "tag=$PREFIX.$new_patch" >> $GITHUB_OUTPUT
