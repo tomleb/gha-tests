@@ -89,6 +89,7 @@ jobs:
 
         gh pr create \
           --title "[$RANCHER_REF] Bump steve to $TAG" \
+          --body "Bump steve to $TAG" \
           --repo ${{ github.repository_owner }}/rancher-rancher \
           --head "${{ github.repository_owner }}:$BRANCH" \
           --base "$RANCHER_REF"
