@@ -75,6 +75,9 @@ jobs:
         BRANCH="bump-webhook-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
         git checkout -b "$BRANCH"
 
+        git config --global user.email "bot@tomlebreux.com"
+        git config --global user.name "the bot"
+
         echo go mod edit -require=github.com/rancher/steve@$TAG
         echo go mod tidy
         echo go generate ./...
