@@ -32,12 +32,12 @@ jobs:
         if git tag --points-at HEAD | grep -c "$latest_tag"; then
           echo "Tag $latest_tag already is already on latest commit, no need to create a new tag"
           echo "tag=$latest_tag" >> $GITHUB_OUTPUT
-          echo "needs_create=true" >> $GITHUB_OUTPUT
+          echo "needs_create=false" >> $GITHUB_OUTPUT
         else
           echo "Tag $latest_tag is on older commit, will create a new tag"
           new_patch=$((latest_patch+1))
           echo "tag=$PREFIX.$new_patch" >> $GITHUB_OUTPUT
-          echo "needs_create=false" >> $GITHUB_OUTPUT
+          echo "needs_create=true" >> $GITHUB_OUTPUT
         fi
       env:
         PREFIX: ${{ github.event.inputs.tag_prefix }}
