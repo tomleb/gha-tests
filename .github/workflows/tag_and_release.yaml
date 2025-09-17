@@ -87,9 +87,12 @@ jobs:
 
         git push origin $BRANCH
 
+        old_steve=$(go mod graph | grep 'github.com/rancher/rancher github.com/rancher/steve' | sed 's|.*@||')
+        body=$(../.github/workflows/scripts/release-message.sh $old_steve v0.7.2)
+
         gh pr create \
           --title "[$RANCHER_REF] Bump steve to $TAG" \
-          --body "Bump steve to $TAG" \
+          --body "$body" \
           --repo ${{ github.repository_owner }}/rancher-rancher \
           --head "${{ github.repository_owner }}:$BRANCH" \
           --base "$RANCHER_REF"
