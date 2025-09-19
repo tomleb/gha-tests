@@ -5,4 +5,5 @@ runs:
   steps:
     - name: Run it
       shell: bash
-      run: ./backport.sh
+      run: |
+        ${{github.action_path}}/backport.sh
