@@ -1,7 +1,7 @@
 name: 'Backport PR'
 description: 'Backports a PR to a target branch'
 inputs:
-  pull-requests:
+  pull-request:
     required: true
   target-branch:
     required: true
