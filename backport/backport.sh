@@ -30,7 +30,15 @@ git checkout -b "$branch_name" "origin/$TARGET_BRANCH"
 
 committed_something=""
 
+failed_commit=""
+skipped_commits=""
+
 for commit in $(GH_PAGER=  gh pr view "$pr_number" --json commits --jq '.commits[].oid'); do
+	if [ -n "$failed_commit" ]; then
+		skipped_commits="$skipped_commits
+$commit"
+		continue
+	fi
 	# Those commits might be orphaned so we attempt to fetch them
 	git fetch origin "$commit:refs/remotes/origin/orphaned-commit"
 
@@ -57,6 +65,19 @@ EOF
 )
 fi
 
+failed=""
+if [ -n "$failed_commit" ]; then
+	failed=$(cat <<EOF
+Cherry-picking failed, here are the list of commits that are missing:
+
+\`\`\`
+$failed_commit
+$skipped_commits
+\`\`\`
+EOF
+)
+fi
+
 title=$(echo "[$TARGET_BRANCH] $old_title")
 body=$(cat <<EOF
 **Backport**
@@ -70,6 +91,8 @@ git clone https://github.com/$REPO
 cd $repo_name
 git switch $branch_name
 \`\`\`
+
+$failed
 
 $generated_by
 
