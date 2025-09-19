@@ -107,6 +107,6 @@ gh pr create \
   --title "$title" \
   --body "$body" \
   --repo "$REPO" \
-  --head "tomleb:$branch_name" \
+  --head "$(echo $REPO | cut -d/ -f1):$branch_name" \
   --base "$TARGET_BRANCH" \
   --draft
