@@ -31,6 +31,9 @@ git checkout -b "$branch_name" "origin/$TARGET_BRANCH"
 committed_something=""
 
 for commit in $(GH_PAGER=  gh pr view "$pr_number" --json commits --jq '.commits[].oid'); do
+	# Those commits might be orphaned so we attempt to fetch them
+	git fetch origin "$commit:refs/remotes/origin/orphaned-commit"
+
 	if git cherry-pick --allow-empty "$commit"; then
 		committed_something="true"
 	else
