@@ -1,0 +1,8 @@
+name: 'Backport PR'
+description: 'Backports a PR to a target branch'
+runs:
+  using: "composite"
+  steps:
+    - name: Run it
+      shell: bash
+      run: ./backport.sh
