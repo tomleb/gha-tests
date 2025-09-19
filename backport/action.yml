@@ -7,6 +7,9 @@ inputs:
     required: true
   repository:
     required: true
+  is-draft:
+    default: false
+    type: boolean
 runs:
   using: "composite"
   steps:
@@ -18,3 +21,4 @@ runs:
       PULL_REQUEST: ${{ inputs.pull-request }}
       TARGET_BRANCH: ${{ inputs.target-branch }}
       REPO: ${{ inputs.repository }}
+      IS_DRAFT: ${{ inputs.is-draft }}

@@ -6,6 +6,11 @@ PULL_REQUEST=$1
 TARGET_BRANCH=$2
 REPO=$3
 
+IS_DRAFT=${IS_DRAFT:-false}
+if [ "$IS_DRAFT" = "true" ]; then
+	DRAFT_FLAG="--draft"
+fi
+
 if [ -z "$PULL_REQUEST" ] || [ -z "$TARGET_BRANCH" ] || [ -z "$REPO" ]; then
 	echo "Usage: $0 <PR number> <target branch> <owner/repo>" 1>&2
 	exit 1
@@ -109,4 +114,4 @@ gh pr create \
   --repo "$REPO" \
   --head "$(echo $REPO | cut -d/ -f1):$branch_name" \
   --base "$TARGET_BRANCH" \
-  --draft
+  $DRAFT_FLAG
