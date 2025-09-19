@@ -26,7 +26,7 @@ pr_number=$PULL_REQUEST
 old_title=$(gh pr view "$pr_number" --json title --jq '.title')
 old_body=$(gh pr view "$pr_number" --json body --jq '.body')
 
-git checkout -b "$branch_name" "$TARGET_BRANCH"
+git checkout -b "$branch_name" "origin/$TARGET_BRANCH"
 
 committed_something=""
 
