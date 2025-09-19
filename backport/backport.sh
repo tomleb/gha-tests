@@ -47,6 +47,7 @@ $commit"
 	else
 		echo "Cherry-pick failed, skipping" 1>&2
 		git cherry-pick --abort
+		failed_commit="$commit"
 	fi
 done
 
