@@ -7,6 +7,10 @@ on:
         description: "Create the labels in this repository"
         required: true
         type: string
+      branch-filter-regex:
+        description: "Regex to filter which branches need cherry-pick labels (eg: main|release/.*)"
+        required: true
+        type: string
       color:
         description: "Color of the cherry-pick/* labels (eg: FF00FF)"
         default: "38B395"
@@ -27,12 +31,9 @@ jobs:
           branches=$(gh api repos/$REPO/branches | jq -r '.[].name')
 
           for branch in $branches; do
-            case $branch in
-            test-main|test-release/*) ;;
-            *)
+            if ! echo "$branch" | grep -Eq "$REGEX"; then
               continue
-              ;;
-            esac
+            fi
 
             echo "Creating or updating cherry-pick labels for branch $branch"
             gh -R "$REPO" label create cherry-pick/$branch \
@@ -49,3 +50,4 @@ jobs:
           COLOR: ${{ inputs.color }}
           COLOR_DONE: ${{ inputs.color-done }}
           GH_TOKEN: ${{ secrets.token }}
+          REGEX: ${{ inputs.branch-filter-regex }}
