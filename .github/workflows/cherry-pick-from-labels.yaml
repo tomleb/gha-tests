@@ -40,6 +40,7 @@ jobs:
           GH_TOKEN: ${{ secrets.token }}
           SKIP: ${{ inputs.skip-membership-check }}
         run: |
+          echo $SKIP
           if [ "$SKIP" = "true" ]; then
             echo "is_member=true" >> $GITHUB_OUTPUT
             return 0
