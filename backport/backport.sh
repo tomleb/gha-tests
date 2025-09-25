@@ -108,10 +108,12 @@ $old_body
 EOF
 )
 
-gh pr create \
+PR_URL=$(gh pr create \
   --title "$title" \
   --body "$body" \
   --repo "$REPO" \
   --head "$(echo $REPO | cut -d/ -f1):$branch_name" \
   --base "$TARGET_BRANCH" \
-  $DRAFT_FLAG
+  $DRAFT_FLAG)
+echo "Created PR at $PR_URL"
+echo "pr-url=$PR_URL" >> $GITHUB_OUTPUT

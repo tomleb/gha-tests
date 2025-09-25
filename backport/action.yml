@@ -10,10 +10,14 @@ inputs:
   is-draft:
     default: false
     type: boolean
+outputs:
+  pr-url:
+    value: ${{ steps.run.outputs.pr-url }}
 runs:
   using: "composite"
   steps:
   - name: Run it
+    id: run
     shell: bash
     run: |
       ${{ github.action_path }}/backport.sh "$PULL_REQUEST" "$TARGET_BRANCH" "$REPO"
