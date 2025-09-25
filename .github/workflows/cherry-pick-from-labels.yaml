@@ -23,6 +23,9 @@ on:
         description: ""
         required: true
         type: string
+      skip-membership-check:
+        default: false
+        type: bool
     secrets:
       token:
         required: true
@@ -31,7 +34,26 @@ jobs:
   cherry-pick-pr:
     runs-on: ubuntu-latest
     steps:
-      - id: detect
+      - name: Check org membership
+        id: membership
+        env:
+          GH_TOKEN: ${{ secrets.token }}
+          SKIP: ${{ inputs.skip-membership-check }}
+        run: |
+          if [ "$SKIP" = "true" ]; then
+            echo "is_member=true" >> $GITHUB_OUTPUT
+            return 0
+          fi
+          if gh api orgs/${GITHUB_REPOSITORY_OWNER}/members --paginate | jq -e --arg GITHUB_ACTOR "$GITHUB_ACTOR" '.[] | select(.login == $GITHUB_ACTOR)' > /dev/null; then
+              echo "${GITHUB_ACTOR} is a member"
+              echo "is_member=true" >> $GITHUB_OUTPUT
+          else
+              echo "${GITHUB_ACTOR} is not a member" >> $GITHUB_STEP_SUMMARY
+              echo "is_member=false" >> $GITHUB_OUTPUT
+          fi
+
+      - if: ${{ steps.membership.outputs.is_member == 'true' }}
+        id: detect
         run: |
           has_label() {
             labels=$(printf '%s' "$LABELS" | jq -r '.[]')
@@ -85,7 +107,7 @@ jobs:
       - if: ${{ steps.detect.outputs.target-branch != '' }}
         run: |
           gh pr edit $PR_NUMBER -R "$REPO" --add-label "cherry-pick-done/$TARGET"
-          gh pr comment $PR_NUMBER -R "$REPO" --body "Created the following cherry-pick PR: $BACKPORT_PR_URL. See run for more details at: $RUN_URL"
+          gh pr comment $PR_NUMBER -R "$REPO" --body "Cherry-pick requested from @$GITHUB_ACTOR. Created the following cherry-pick PR: $BACKPORT_PR_URL. See run for more details at: $RUN_URL"
         env:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           BACKPORT_PR_URL: ${{ steps.backport.outputs.pr-url }}
