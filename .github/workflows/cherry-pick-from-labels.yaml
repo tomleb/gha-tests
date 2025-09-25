@@ -40,17 +40,16 @@ jobs:
           GH_TOKEN: ${{ secrets.token }}
           SKIP: ${{ inputs.skip-membership-check }}
         run: |
-          echo $SKIP
           if [ "$SKIP" = "true" ]; then
             echo "is_member=true" >> $GITHUB_OUTPUT
-            return 0
-          fi
-          if gh api orgs/${GITHUB_REPOSITORY_OWNER}/members --paginate | jq -e --arg GITHUB_ACTOR "$GITHUB_ACTOR" '.[] | select(.login == $GITHUB_ACTOR)' > /dev/null; then
-              echo "${GITHUB_ACTOR} is a member"
-              echo "is_member=true" >> $GITHUB_OUTPUT
           else
-              echo "${GITHUB_ACTOR} is not a member" >> $GITHUB_STEP_SUMMARY
-              echo "is_member=false" >> $GITHUB_OUTPUT
+            if gh api orgs/${GITHUB_REPOSITORY_OWNER}/members --paginate | jq -e --arg GITHUB_ACTOR "$GITHUB_ACTOR" '.[] | select(.login == $GITHUB_ACTOR)' > /dev/null; then
+                echo "${GITHUB_ACTOR} is a member"
+                echo "is_member=true" >> $GITHUB_OUTPUT
+            else
+                echo "${GITHUB_ACTOR} is not a member" >> $GITHUB_STEP_SUMMARY
+                echo "is_member=false" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - if: ${{ steps.membership.outputs.is_member == 'true' }}
