@@ -3,10 +3,6 @@ name: Generate cherry-pick labels
 on:
   workflow_call:
     inputs:
-      repository:
-        description: "Create the labels in this repository"
-        required: true
-        type: string
       branch-filter-regex:
         description: "Regex to filter which branches need cherry-pick labels (eg: main|release/.*)"
         required: true
@@ -46,7 +42,7 @@ jobs:
               --force
           done
         env:
-          REPO: ${{ inputs.repository }}
+          REPO: ${{ github.repository }}
           COLOR: ${{ inputs.color }}
           COLOR_DONE: ${{ inputs.color-done }}
           GH_TOKEN: ${{ secrets.token }}
